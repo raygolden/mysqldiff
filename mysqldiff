@@ -1,0 +1,139 @@
+#!/usr/bin/env python
+
+import MySQLdb
+import sys
+import getpass
+
+class Database:
+	def __init__(self, host, username, password, database):
+		self.host = host
+
+		try:
+			self.db = MySQLdb.connect(host=host, user=username, passwd=password, db=database)
+		except:
+			print "Could not connect to %s with that username and password." % host
+			exit(1)
+		self.cursor = self.db.cursor()
+	
+	def get_tables(self):
+		tables = self.get_array("SHOW TABLES")
+		results = []
+		for table in tables:
+			results.append(table[0])
+		return results
+	
+	def get_host(self):
+		return self.host
+	
+	def get_table(self, table):
+		sql = "EXPLAIN " + table
+		table = self.get_array(sql)
+		data = []
+		for row in table:
+			data.append(row[0:6])
+		return data
+	
+	def get_array(self, sql):
+		self.cursor.execute(sql)
+		result = self.cursor.fetchall()
+		results = []
+		for record in result:
+			results.append(record)
+		return results
+
+def get_fieldname_list(tdata):
+	data = []
+	for row in tdata:
+		data.append(row[0])
+	return data
+
+def get_field_from_fieldname(fieldname, fields):
+	for field in fields:
+		if fieldname == field[0]:
+			return field
+	return False
+
+if __name__ == "__main__":
+	if len(sys.argv) != 7:
+		print "Usage: %s <db1_host> <db1_username> <db1_database> <db2_host> <db2_username> <db2_database>" % sys.argv[0]
+		exit(1)
+
+	db1_host = sys.argv[1]
+	db1_username = sys.argv[2]
+	db1_database = sys.argv[3]
+	db1_password = getpass.getpass("Database 1 Password: ")
+	db1_password = "dZL2WSrYEPLPXj5p"
+	
+	db2_host = sys.argv[4]
+	db2_username = sys.argv[5]
+	db2_database = sys.argv[6]
+	db2_password = getpass.getpass("Database 2 Password: ")
+	db2_password = "dZL2WSrYEPLPXj5p"
+	
+	# Create those database objects:
+	db1 = Database(db1_host, db1_username, db1_password, db1_database)
+	db2 = Database(db2_host, db2_username, db2_password, db2_database)
+
+	# Check if tables are the same:
+	db1_tables = db1.get_tables()
+	db2_tables = db2.get_tables()
+	diff = list(set(db1_tables) - set(db2_tables))
+	
+	# Output table diff:
+	if diff == []:
+		print " - Table names match each other, no tables missing on either server."
+	else:
+		for db in diff:
+			if db1_tables.count(db) == 0:
+				server = db2.get_host()
+			else:
+				server = db1.get_host()
+
+		print " ! The table \"%s\" exists only on \"%s\"." % (db, server)
+	
+
+	# Get field info for each table and compare:
+	for table in db1_tables:
+		if table in diff:
+			continue
+
+		tdata1 = db1.get_table(table)
+		tdata2 = db2.get_table(table)
+
+		if tdata1 == tdata2:
+			print " - \"%s\" is the same on both servers." % table
+		else:
+			print " ! \"%s\" has differences:" % table
+		
+			# Get fieldname lists:
+			db1_table = get_fieldname_list(tdata1)
+			db2_table = get_fieldname_list(tdata2)
+			
+			diff = list(set(db1_table) - set(db2_table))
+			
+			if diff == []:
+				for field in db1_table:
+					db1_field = get_field_from_fieldname(field, tdata1)
+					db2_field = get_field_from_fieldname(field, tdata2)
+					
+					# Check datatype:
+					if db1_field[1] != db2_field[1]:
+						print "        - Different datatype with field \"%s\": '%s' on '%s', '%s' on '%s'." % (field, db1_field[1], db1.get_host(), db2_field[1], db2.get_host())
+					
+					if db1_field[2] != db2_field[2]:
+						if db1_field[2] == 'NO':
+							db1_null = "set as NOT NULL"
+							db2_null = "it is allowed to be NULL"
+						else:
+							db1_null = "allowed to be NULL"
+							db2_null = "it is set as NOT NULL"
+						
+						print "        - Field \"%s\" on \"%s\" is %s whereas on \"%s\" %s." % (field, db1.get_host(), db1_null, db2.get_host(), db2_null)
+					
+			else:
+				for field in diff:
+					if db1_table.count(field) == 0:
+						server = db2.get_host()
+					else:
+						server = db1.get_host()
+					print "        - Field \"%s\" only exists on \"%s\"" % (field, server)
