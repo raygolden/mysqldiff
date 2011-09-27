@@ -1,0 +1,10 @@
+MySQLdiff is a tool for comparing the structures of two databases.
+
+You pass in the details for both servers/databases then MySQLdiff checks for
+any differences between the two.
+
+It was a quickly written script and could do with being rewritten in parts,
+however it does the job quite well. It is a touch incomplete and I'll try
+and finish it off soon.
+
+Any bugs, please email mail@timdavi.es

@@ -62,13 +62,11 @@ if __name__ == "__main__":
 	db1_username = sys.argv[2]
 	db1_database = sys.argv[3]
 	db1_password = getpass.getpass("Database 1 Password: ")
-	db1_password = "dZL2WSrYEPLPXj5p"
 	
 	db2_host = sys.argv[4]
 	db2_username = sys.argv[5]
 	db2_database = sys.argv[6]
 	db2_password = getpass.getpass("Database 2 Password: ")
-	db2_password = "dZL2WSrYEPLPXj5p"
 	
 	# Create those database objects:
 	db1 = Database(db1_host, db1_username, db1_password, db1_database)
