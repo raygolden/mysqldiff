@@ -1,8 +1,18 @@
 #!/usr/bin/env python
 
-import MySQLdb
-import sys
-import getpass
+try:
+	import sys
+	import getpass
+	import argparse
+except ImportError:
+	print "Is your Python install a regular setup? You appear to be missing some modules."
+	print "mysqldiff requires 'sys', 'getpass' and 'argparse'"
+try:
+	import MySQLdb
+except ImportError:
+	print "This script requires: python-mysqldb"
+	print "On Debian/Ubuntu systems, install it with: sudo apt-get install python-mysqldb"
+	exit(1)
 
 class Database:
 	def __init__(self, host, username, password, database):
@@ -54,18 +64,30 @@ def get_field_from_fieldname(fieldname, fields):
 	return False
 
 if __name__ == "__main__":
-	if len(sys.argv) != 7:
-		print "Usage: %s <db1_host> <db1_username> <db1_database> <db2_host> <db2_username> <db2_database>" % sys.argv[0]
-		exit(1)
-
-	db1_host = sys.argv[1]
-	db1_username = sys.argv[2]
-	db1_database = sys.argv[3]
+	parser = argparse.ArgumentParser(description='Compares two MySQL databases and reports any schema differences.')
+	parser.add_argument('-h1', dest='h1', metavar='', nargs='+', help="Hostname for the first database")
+	parser.add_argument('-u1', dest='u1', metavar='', nargs='+', help="Username for the first database")
+	parser.add_argument('-d1', dest='d1', metavar='', nargs='+', help="First database name")
+	parser.add_argument('-h2', dest='h2', metavar='', nargs='+', help="Hostname for the second database")
+	parser.add_argument('-u2', dest='u2', metavar='', nargs='+', help="Username for the second database")
+	parser.add_argument('-d2', dest='d2', metavar='', nargs='+', help="Second database name")
+	
+	parser.add_argument('-q', dest='quiet', nargs='?', default='verbose', metavar='--quiet', help="Hide reports on similarities.")
+	
+	args = parser.parse_args()
+	
+	if len(sys.argv) == 1:
+		parser.print_help()
+		exit(0)
+	
+	db1_host     = args.h1[0]
+	db1_username = args.u1[0]
+	db1_database = args.d1[0]
 	db1_password = getpass.getpass("Database 1 Password: ")
 	
-	db2_host = sys.argv[4]
-	db2_username = sys.argv[5]
-	db2_database = sys.argv[6]
+	db2_host     = args.h2[0]
+	db2_username = args.u2[0]
+	db2_database = args.d2[0]
 	db2_password = getpass.getpass("Database 2 Password: ")
 	
 	# Create those database objects:
@@ -99,7 +121,8 @@ if __name__ == "__main__":
 		tdata2 = db2.get_table(table)
 
 		if tdata1 == tdata2:
-			print " - \"%s\" is the same on both servers." % table
+			if args.quiet == 'verbose':
+				print " - \"%s\" is the same on both servers." % table
 		else:
 			print " ! \"%s\" has differences:" % table
 		
