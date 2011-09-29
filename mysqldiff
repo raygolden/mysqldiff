@@ -79,16 +79,19 @@ if __name__ == "__main__":
 	if len(sys.argv) == 1:
 		parser.print_help()
 		exit(0)
-	
-	db1_host     = args.h1[0]
-	db1_username = args.u1[0]
-	db1_database = args.d1[0]
-	db1_password = getpass.getpass("Database 1 Password: ")
-	
-	db2_host     = args.h2[0]
-	db2_username = args.u2[0]
-	db2_database = args.d2[0]
-	db2_password = getpass.getpass("Database 2 Password: ")
+	try:
+		db1_host     = args.h1[0]
+		db1_username = args.u1[0]
+		db1_database = args.d1[0]
+		db1_password = getpass.getpass("Database 1 Password: ")
+		
+		db2_host     = args.h2[0]
+		db2_username = args.u2[0]
+		db2_database = args.d2[0]
+		db2_password = getpass.getpass("Database 2 Password: ")
+	except:
+		print "Error: missing arguments."
+		exit(1)
 	
 	# Create those database objects:
 	db1 = Database(db1_host, db1_username, db1_password, db1_database)
