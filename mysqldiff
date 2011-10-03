@@ -144,6 +144,7 @@ if __name__ == "__main__":
 					if db1_field[1] != db2_field[1]:
 						print "        - Different datatype with field \"%s\": '%s' on '%s', '%s' on '%s'." % (field, db1_field[1], db1.get_host(), db2_field[1], db2.get_host())
 					
+					# Check NULL status:
 					if db1_field[2] != db2_field[2]:
 						if db1_field[2] == 'NO':
 							db1_null = "set as NOT NULL"
@@ -153,6 +154,12 @@ if __name__ == "__main__":
 							db2_null = "it is set as NOT NULL"
 						
 						print "        - Field \"%s\" on \"%s\" is %s whereas on \"%s\" %s." % (field, db1.get_host(), db1_null, db2.get_host(), db2_null)
+					
+					# Check key:
+					
+					# Check default field:
+					
+					# Check extra field:
 					
 			else:
 				for field in diff:
