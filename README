@@ -8,3 +8,7 @@ however it does the job quite well. It is a touch incomplete and I'll try
 and finish it off soon.
 
 Any bugs, please email mail@timdavi.es
+
+
+*** GRAPHICAL INTERFACE: ***
+I'm planning to make a GTK interface for mysqldiff and perhaps rewrite the application in C, that's why there's a gtkbuilder file (gui.ui).
