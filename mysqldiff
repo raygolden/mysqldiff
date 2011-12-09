@@ -2,11 +2,10 @@
 
 try:
 	import sys
-	import getpass
 	import argparse
 except ImportError:
 	print "Is your Python install a regular setup? You appear to be missing some modules."
-	print "mysqldiff requires 'sys', 'getpass' and 'argparse'"
+	print "mysqldiff requires 'sys' and 'argparse'"
 try:
 	import MySQLdb
 except ImportError:
@@ -67,9 +66,11 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='Compares two MySQL databases and reports any schema differences.')
 	parser.add_argument('-h1', dest='h1', metavar='', nargs='+', help="Hostname for the first database")
 	parser.add_argument('-u1', dest='u1', metavar='', nargs='+', help="Username for the first database")
+	parser.add_argument('-p1', dest='u1', metavar='', nargs='+', help="Password for the first database")
 	parser.add_argument('-d1', dest='d1', metavar='', nargs='+', help="First database name")
 	parser.add_argument('-h2', dest='h2', metavar='', nargs='+', help="Hostname for the second database")
 	parser.add_argument('-u2', dest='u2', metavar='', nargs='+', help="Username for the second database")
+	parser.add_argument('-p2', dest='u2', metavar='', nargs='+', help="Password for the second database")
 	parser.add_argument('-d2', dest='d2', metavar='', nargs='+', help="Second database name")
 	
 	parser.add_argument('-q', dest='quiet', nargs='?', default='verbose', metavar='--quiet', help="Hide reports on similarities.")
@@ -83,12 +84,12 @@ if __name__ == "__main__":
 		db1_host     = args.h1[0]
 		db1_username = args.u1[0]
 		db1_database = args.d1[0]
-		db1_password = getpass.getpass("Database 1 Password: ")
+		db1_password = args.p1[0]
 		
 		db2_host     = args.h2[0]
 		db2_username = args.u2[0]
 		db2_database = args.d2[0]
-		db2_password = getpass.getpass("Database 2 Password: ")
+		db2_password = args.p2[0]
 	except:
 		print "Error: missing arguments."
 		exit(1)

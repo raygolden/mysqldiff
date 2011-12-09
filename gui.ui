@@ -6,7 +6,7 @@
     <property name="width_request">400</property>
     <property name="height_request">404</property>
     <child>
-      <object class="GtkVBox" id="vbox2">
+      <object class="GtkVBox" id="main_layout">
         <property name="visible">True</property>
         <child>
           <object class="GtkTable" id="table2">
@@ -16,12 +16,16 @@
             <child>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Host: </property>
               </object>
             </child>
             <child>
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Password: </property>
               </object>
               <packing>
@@ -32,6 +36,8 @@
             <child>
               <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Username: </property>
               </object>
               <packing>
@@ -42,6 +48,8 @@
             <child>
               <object class="GtkLabel" id="label4">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Database: </property>
               </object>
               <packing>
@@ -52,6 +60,8 @@
             <child>
               <object class="GtkLabel" id="label5">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Host: </property>
               </object>
               <packing>
@@ -62,6 +72,8 @@
             <child>
               <object class="GtkLabel" id="label6">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Username: </property>
               </object>
               <packing>
@@ -74,6 +86,8 @@
             <child>
               <object class="GtkLabel" id="label7">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Password: </property>
               </object>
               <packing>
@@ -86,6 +100,8 @@
             <child>
               <object class="GtkLabel" id="label8">
                 <property name="visible">True</property>
+                <property name="xalign">0</property>
+                <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Database: </property>
               </object>
               <packing>
@@ -96,7 +112,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry1">
+              <object class="GtkEntry" id="db1_host">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -107,7 +123,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry2">
+              <object class="GtkEntry" id="db1_user">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -120,7 +136,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry3">
+              <object class="GtkEntry" id="db1_pass">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -133,7 +149,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry4">
+              <object class="GtkEntry" id="db1_db">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -146,7 +162,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry5">
+              <object class="GtkEntry" id="db2_host">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -157,7 +173,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry6">
+              <object class="GtkEntry" id="db2_user">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -170,7 +186,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry7">
+              <object class="GtkEntry" id="db2_pass">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -183,7 +199,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkEntry" id="entry8">
+              <object class="GtkEntry" id="db2_db">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
@@ -197,11 +213,13 @@
             </child>
           </object>
           <packing>
+            <property name="expand">False</property>
+            <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
         </child>
         <child>
-          <object class="GtkTextView" id="textview1">
+          <object class="GtkTextView" id="output_box">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
           </object>
@@ -215,7 +233,7 @@
             <property name="spacing">7</property>
             <property name="layout_style">spread</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="quit_button">
                 <property name="label">gtk-quit</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -229,7 +247,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="connect_button">
                 <property name="label">gtk-connect</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -244,6 +262,9 @@
             </child>
           </object>
           <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="padding">7</property>
             <property name="position">2</property>
           </packing>
         </child>
