@@ -6,11 +6,7 @@ class Database:
     def __init__(self, host, username, password, database):
         self.host = host
 
-        try:
-            self.db = MySQLdb.connect(host=host, user=username, passwd=password, db=database)
-        except:
-            print "Could not connect to %s with that username and password." % host
-            exit(1)
+        self.db = MySQLdb.connect(host=host, user=username, passwd=password, db=database)
         self.cursor = self.db.cursor()
     
     def get_tables(self):
@@ -37,3 +33,4 @@ class Database:
         results = []
         for record in result:
             results.append(record)
+        return results
