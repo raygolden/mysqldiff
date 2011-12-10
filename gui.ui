@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
+  <object class="GtkTextBuffer" id="output_buffer"/>
   <object class="GtkWindow" id="window1">
     <property name="width_request">400</property>
     <property name="height_request">404</property>
+    <property name="can_focus">False</property>
     <child>
       <object class="GtkVBox" id="main_layout">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
         <child>
           <object class="GtkTable" id="table2">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="n_rows">4</property>
             <property name="n_columns">4</property>
             <child>
               <object class="GtkLabel" id="label1">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Host: </property>
@@ -24,6 +28,7 @@
             <child>
               <object class="GtkLabel" id="label2">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Password: </property>
@@ -36,6 +41,7 @@
             <child>
               <object class="GtkLabel" id="label3">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Username: </property>
@@ -48,6 +54,7 @@
             <child>
               <object class="GtkLabel" id="label4">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB1 Database: </property>
@@ -60,6 +67,7 @@
             <child>
               <object class="GtkLabel" id="label5">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Host: </property>
@@ -72,6 +80,7 @@
             <child>
               <object class="GtkLabel" id="label6">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Username: </property>
@@ -86,6 +95,7 @@
             <child>
               <object class="GtkLabel" id="label7">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Password: </property>
@@ -100,6 +110,7 @@
             <child>
               <object class="GtkLabel" id="label8">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="xalign">0</property>
                 <property name="xpad">5</property>
                 <property name="label" translatable="yes">DB2 Database: </property>
@@ -214,6 +225,7 @@
           </object>
           <packing>
             <property name="expand">False</property>
+            <property name="fill">True</property>
             <property name="padding">5</property>
             <property name="position">0</property>
           </packing>
@@ -222,14 +234,18 @@
           <object class="GtkTextView" id="output_box">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
+            <property name="buffer">output_buffer</property>
           </object>
           <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
         <child>
           <object class="GtkHButtonBox" id="hbuttonbox1">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="spacing">7</property>
             <property name="layout_style">spread</property>
             <child>
@@ -238,6 +254,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>
@@ -252,6 +269,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
                 <property name="use_stock">True</property>
               </object>
               <packing>

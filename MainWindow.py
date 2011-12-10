@@ -24,6 +24,8 @@ class MainWindow (gtk.Window):
         # Get widgets:
         quit_button = builder.get_object('quit_button')
         connect_button = builder.get_object('connect_button')
+        output_box = builder.get_object('output_box')
+        self.output_buffer = builder.get_object('output_buffer')
         
         # Set callbacks:
         self.connect('destroy', gtk.main_quit)
@@ -44,7 +46,7 @@ class MainWindow (gtk.Window):
         
         self.compare_dbs(db1_host, db1_user, db1_pass, db1_db, db2_host, db2_user, db2_pass, db2_db)
         
-        
+        self.output_buffer.set_text(self.text)
     
     def get_fieldname_list(self, tdata):
         data = []
