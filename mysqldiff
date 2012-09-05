@@ -1,0 +1,187 @@
+#!/usr/bin/env python
+
+try:
+	import sys
+	import getpass
+	import argparse
+except ImportError:
+	print "Is your Python install a regular setup? You appear to be missing some modules."
+	print "mysqldiff requires 'sys', 'getpass' and 'argparse'"
+try:
+	import MySQLdb
+except ImportError:
+	print "This script requires: python-mysqldb"
+	print "On Debian/Ubuntu systems, install it with: sudo apt-get install python-mysqldb"
+	exit(1)
+
+class Database:
+	def __init__(self, host, username, password, database, other_host):
+		self.host = host
+		self.database_name = database
+		
+		if other_host == host:
+			self.differentiate_on_dbname = True
+		else:
+			self.differentiate_on_dbname = False
+		
+		try:
+			self.db = MySQLdb.connect(host=host, user=username, passwd=password, db=database)
+		except:
+			print "Could not connect to %s with that username and password." % host
+			exit(1)
+		self.cursor = self.db.cursor()
+	
+	def get_tables(self):
+		tables = self.get_array("SHOW TABLES")
+		results = []
+		for table in tables:
+			results.append(table[0])
+		return results
+	
+	def get_host(self):
+		if self.differentiate_on_dbname:
+			return self.database_name
+		return self.host
+	
+	def get_table(self, table):
+		sql = "EXPLAIN " + table
+		table = self.get_array(sql)
+		data = []
+		for row in table:
+			data.append(row[0:6])
+		return data
+	
+	def get_array(self, sql):
+		self.cursor.execute(sql)
+		result = self.cursor.fetchall()
+		results = []
+		for record in result:
+			results.append(record)
+		return results
+
+def get_fieldname_list(tdata):
+	data = []
+	for row in tdata:
+		data.append(row[0])
+	return data
+
+def get_field_from_fieldname(fieldname, fields):
+	for field in fields:
+		if fieldname == field[0]:
+			return field
+	return False
+
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(description='Compares two MySQL databases and reports any schema differences.')
+	parser.add_argument('-h1', dest='h1', metavar='', nargs='+', help="Hostname for the first database")
+	parser.add_argument('-u1', dest='u1', metavar='', nargs='+', help="Username for the first database")
+	parser.add_argument('-d1', dest='d1', metavar='', nargs='+', help="First database name")
+	parser.add_argument('-h2', dest='h2', metavar='', nargs='+', help="Hostname for the second database")
+	parser.add_argument('-u2', dest='u2', metavar='', nargs='+', help="Username for the second database")
+	parser.add_argument('-d2', dest='d2', metavar='', nargs='+', help="Second database name")
+	
+	parser.add_argument('-q', dest='quiet', nargs='?', default='verbose', metavar='--quiet', help="Hide reports on similarities.")
+	
+	args = parser.parse_args()
+	
+	if len(sys.argv) == 1:
+		parser.print_help()
+		exit(0)
+	try:
+		db1_host     = args.h1[0]
+		db1_username = args.u1[0]
+		db1_database = args.d1[0]
+		db1_password = getpass.getpass("Database 1 Password: ")
+		
+		db2_host     = args.h2[0]
+		db2_username = args.u2[0]
+		db2_database = args.d2[0]
+		db2_password = getpass.getpass("Database 2 Password: ")
+	except:
+		print "Error: missing arguments."
+		exit(1)
+	
+	# Create those database objects:
+	db1 = Database(db1_host, db1_username, db1_password, db1_database, db2_host)
+	db2 = Database(db2_host, db2_username, db2_password, db2_database, db1_host)
+
+	# Check if tables are the same:
+	db1_tables = db1.get_tables()
+	db2_tables = db2.get_tables()
+	diff = list(set(db1_tables) - set(db2_tables))
+	
+	# Output table diff:
+	if diff == []:
+		print " - Table names match each other, no tables missing on either server."
+	else:
+		for db in diff:
+			if db1_tables.count(db) == 0:
+				server = db2.get_host()
+			else:
+				server = db1.get_host()
+
+		print " ! The table \"%s\" exists only on \"%s\"." % (db, server)
+	
+
+	# Get field info for each table and compare:
+	for table in db1_tables:
+		if table in diff:
+			continue
+		
+		try:
+			tdata1 = db1.get_table(table)
+		except:
+			 print " ! Table `%s` does not exist on \"%s\"" % (table, db1.get_host())
+			 continue
+		
+		try:
+			tdata2 = db2.get_table(table)
+		except:
+			print " ! Table `%s` does not exist on \"%s\"" % (table, db2.get_host())
+			continue
+		
+		if tdata1 == tdata2:
+			if args.quiet == 'verbose':
+				print " - `%s` is the same on both servers." % table
+		else:
+			print " ! `%s` has differences:" % table
+		
+			# Get fieldname lists:
+			db1_table = get_fieldname_list(tdata1)
+			db2_table = get_fieldname_list(tdata2)
+			
+			diff = list(set(db1_table) - set(db2_table))
+			
+			if diff == []:
+				for field in db1_table:
+					db1_field = get_field_from_fieldname(field, tdata1)
+					db2_field = get_field_from_fieldname(field, tdata2)
+					
+					# Check datatype:
+					if db1_field[1] != db2_field[1]:
+						print "        - Different datatype with field `%s`: '%s' on '%s', '%s' on '%s'." % (field, db1_field[1], db1.get_host(), db2_field[1], db2.get_host())
+					
+					# Check NULL status:
+					if db1_field[2] != db2_field[2]:
+						if db1_field[2] == 'NO':
+							db1_null = "set as NOT NULL"
+							db2_null = "it is allowed to be NULL"
+						else:
+							db1_null = "allowed to be NULL"
+							db2_null = "it is set as NOT NULL"
+						
+						print "        - Field `%s` on \"%s\" is %s whereas on \"%s\" %s." % (field, db1.get_host(), db1_null, db2.get_host(), db2_null)
+					
+					# Check key:
+					
+					# Check default field:
+					
+					# Check extra field:
+					
+			else:
+				for field in diff:
+					if db1_table.count(field) == 0:
+						server = db2.get_host()
+					else:
+						server = db1.get_host()
+					print "        - Field `%s` only exists on \"%s\"" % (field, server)
