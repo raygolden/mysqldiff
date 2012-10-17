@@ -191,6 +191,8 @@ if __name__ == "__main__":
 					# Check key:
 					
 					# Check default field:
+					if db1_field[4] != db2_field[4]:
+						print "		- Different default values for field `%s`: '%s' on '%s', '%s' on '%s'." % (field, db1_field[4], db1.get_host(), db2_field[4], db2.get_host())
 					
 					# Check extra field:
 					
