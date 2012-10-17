@@ -2,11 +2,20 @@
 
 try:
 	import sys
+except ImportError:
+	print "mysqldiff requires 'sys' module"
+
+try:
 	import getpass
+except ImportError:
+	print "mysqldiff requires 'getpass' module"
+
+try:
 	import argparse
 except ImportError:
-	print "Is your Python install a regular setup? You appear to be missing some modules."
-	print "mysqldiff requires 'sys', 'getpass' and 'argparse'"
+	print "mysqldiff requires 'argparse' module"
+	
+
 try:
 	import MySQLdb
 except ImportError:
