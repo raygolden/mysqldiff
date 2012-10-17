@@ -3,6 +3,12 @@
 importerrors = None
 
 try:
+	import signal
+except ImportError:
+	print "mysqldiff requires 'signal' module"
+	importerrors = True
+
+try:
 	import sys
 except ImportError:
 	print "mysqldiff requires 'sys' module"
@@ -29,6 +35,8 @@ except ImportError:
 
 if importerrors:
 	exit(1)
+
+signal.signal(signal.SIGINT, signal.SIG_DFL)
 
 class Database:
 	def __init__(self, host, username, password, database, other_host):
