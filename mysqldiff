@@ -68,6 +68,8 @@ class Database:
 		return data
 	
 	def get_array(self, sql):
+		if args.verbose == True:
+			print sql
 		self.cursor.execute(sql)
 		result = self.cursor.fetchall()
 		results = []
@@ -97,6 +99,7 @@ if __name__ == "__main__":
 	parser.add_argument('-d2', dest='d2', metavar='', nargs='+', help="Second database name")
 	
 	parser.add_argument('-q', dest='quiet', nargs='?', default='verbose', metavar='--quiet', help="Hide reports on similarities.")
+	parser.add_argument('-v', action='store_true', dest='verbose', help="Show SQL commands.")
 	
 	args = parser.parse_args()
 	
