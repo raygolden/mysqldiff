@@ -176,11 +176,17 @@ if __name__ == "__main__":
 			# Get fieldname lists:
 			db1_table = get_fieldname_list(tdata1)
 			db2_table = get_fieldname_list(tdata2)
+
+			set_db1 = set(db1_table)
+			set_db2 = set(db2_table)
 			
-			diff = list(set(db1_table) - set(db2_table))
+			# Get sets union of fields in each table
+			union = set_db1 | set_db2
+			intersect = set_db1 & set_db2
+			diff = list(union - intersect)
 			
 			if diff == []:
-				for field in db1_table:
+				for field in union:
 					db1_field = get_field_from_fieldname(field, tdata1)
 					db2_field = get_field_from_fieldname(field, tdata2)
 					
